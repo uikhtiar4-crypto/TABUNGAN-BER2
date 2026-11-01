@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d12">
+<title>MONEY TRADER — Personal Finance Terminal</title>
+<style>
+:root{--bg:#080d12;--panel:#101922;--panel2:#14212b;--line:#20313d;--muted:#8ba0ad;--text:#e8f0f4;--green:#18d69a;--red:#ff6474;--gold:#f0bd62;--blue:#62b8ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 55% -15%,#10294b 0,transparent 38%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 15px;font-weight:700;background:var(--green);color:#04130e}button.secondary{background:#1a2a35;color:var(--text);border:1px solid var(--line)}button.danger{background:#351c25;color:#ff9ba6;border:1px solid #65303c}
+input,select{width:100%;background:#0a1219;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px;outline:none}input:focus,select:focus{border-color:var(--green)}
+.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:22px}.auth{width:min(440px,100%);background:linear-gradient(145deg,#0d1d31,#08111d);border:1px solid #203653;border-radius:22px;padding:26px;box-shadow:0 25px 90px #0009}
+.logo{font-weight:900;letter-spacing:2px;font-size:20px}.logo span{color:var(--green)}.sub{color:var(--muted);font-size:13px;line-height:1.5}.auth h1{font-size:25px;margin:24px 0 6px}.field{display:grid;gap:7px;margin:14px 0}.field label{font-size:12px;color:#a8bac4}.auth-foot{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:18px;color:var(--muted);font-size:13px}.link{color:var(--green);background:none;padding:0}
+#app{display:none;min-height:100vh}.topbar{height:68px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:#07111fee;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
+.user-chip{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#163b34;color:var(--green);font-weight:900}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);max-width:1500px;margin:auto}.side{padding:22px 14px;border-right:1px solid var(--line);min-height:calc(100vh - 68px)}.nav-label{font-size:10px;color:#637986;letter-spacing:1.5px;padding:12px}.nav{width:100%;text-align:left;background:transparent;color:#9db0bb;border:1px solid transparent;margin:3px 0;font-weight:600}.nav.active,.nav:hover{background:#102b37;color:var(--green);border-color:#1e5570}
+main{padding:25px;min-width:0}.heading{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin-bottom:20px}.heading h1{margin:0;font-size:25px}.heading p{margin:6px 0 0;color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.card{background:linear-gradient(145deg,#0d1a2a,#091321);border:1px solid var(--line);border-radius:16px;padding:17px;min-width:0}.stat-label{font-size:12px;color:var(--muted)}.stat-value{font-size:clamp(19px,2.5vw,27px);font-weight:850;margin:9px 0 5px;letter-spacing:-.5px;overflow-wrap:anywhere}.positive{color:var(--green)}.negative{color:var(--red)}.tiny{font-size:11px;color:var(--muted)}
+.two{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,1fr);gap:14px;margin-top:14px}.card-title{font-size:14px;font-weight:800;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.chart-box{height:245px;position:relative}.chart-box canvas{width:100%;height:100%}
+.goal-number{font-size:23px;font-weight:850;margin:8px 0}.progress{height:9px;border-radius:20px;background:#26343d;overflow:hidden;margin:12px 0}.progress span{height:100%;display:block;background:linear-gradient(90deg,#0ba879,#5df0b9);border-radius:20px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.action{padding:13px;border-radius:12px;background:#102b37;color:var(--green);border:1px solid #1e5570;text-align:left}.action small{display:block;color:#8ba69e;margin-top:4px;font-weight:400}
+.section{display:none}.section.active{display:block}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:520px}th,td{text-align:left;padding:12px 9px;border-bottom:1px solid var(--line);font-size:12px}th{color:var(--muted);font-weight:600}td{color:#dce7ec}.pill{padding:4px 8px;border-radius:20px;font-size:10px;background:#15362e;color:var(--green)}.pill.out{background:#3a2028;color:#ff9ba6}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-grid .full{grid-column:1/-1}.empty{text-align:center;padding:28px;color:var(--muted);font-size:13px}.notice{padding:12px;border:1px solid #69552f;background:#2a2418;color:#e7c987;border-radius:11px;font-size:12px;line-height:1.5;margin-top:14px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#18362d;border:1px solid #28634f;color:#c7ffea;padding:12px 18px;border-radius:12px;display:none;z-index:20;font-size:13px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}.side{min-height:0;border-right:0;border-bottom:1px solid var(--line);padding:8px 12px;display:flex;overflow:auto}.nav-label{display:none}.nav{white-space:nowrap;width:auto}.two{grid-template-columns:1fr}.side .nav{font-size:12px;padding:9px 11px}}
+@media(max-width:560px){.topbar{padding:0 14px}.user-chip .username{display:none}main{padding:17px 13px}.heading h1{font-size:21px}.card{padding:14px}.grid{gap:9px}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.auth{padding:21px}}
+</style>
+</head>
+<body>
+<div id="authScreen" class="auth-wrap">
+  <div class="auth">
+    <div class="logo">MONEY <span>TRADER</span></div>
+    <p class="sub">PERSONAL FINANCE TERMINAL · Kelola uang dengan lebih terarah.</p>
+    <div id="loginPanel">
+      <h1>Selamat datang</h1><p class="sub">Masuk ke akun keuangan pribadimu.</p>
+      <div class="field"><label>USERNAME</label><input id="loginUser" autocomplete="username" placeholder="Masukkan username"></div>
+      <div class="field"><label>PASSWORD</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="Masukkan password"></div>
+      <button style="width:100%;margin-top:8px" id="loginBtn">LOGIN KE DASHBOARD</button>
+      <div class="auth-foot">Belum punya akun? <button class="link" id="showRegister">Daftar sekarang</button></div>
+    </div>
+    <div id="registerPanel" style="display:none">
+      <h1>Buat akun baru</h1><p class="sub">Akun baru memiliki catatan keuangan sendiri.</p>
+      <div class="field"><label>NAMA PEMILIK</label><input id="regName" autocomplete="name" placeholder="Nama kamu"></div>
+      <div class="field"><label>USERNAME</label><input id="regUser" autocomplete="username" placeholder="Buat username (min. 3 karakter)"></div>
+      <div class="field"><label>PASSWORD</label><input id="regPass" type="password" autocomplete="new-password" placeholder="Minimal 8 karakter"></div>
+      <div class="field"><label>ULANGI PASSWORD</label><input id="regPass2" type="password" autocomplete="new-password" placeholder="Ketik ulang password"></div>
+      <button style="width:100%;margin-top:8px" id="registerBtn">BUAT AKUN</button>
+      <div class="auth-foot">Sudah punya akun? <button class="link" id="showLogin">Login</button></div>
+    </div>
+    <div class="notice">Demo lokal: akun dan data tersimpan di browser/perangkat ini. Ini belum layanan bank atau server multi-perangkat. Jangan gunakan password penting yang dipakai di tempat lain.</div>
+  </div>
+</div>
+
+<div id="app">
+  <header class="topbar">
+    <div class="logo">MONEY <span>TRADER</span></div>
+    <div class="user-chip"><div class="avatar" id="avatar">U</div><span class="username" id="ownerName">Pemilik</span><button class="secondary" id="logoutBtn">Keluar</button></div>
+  </header>
+  <div class="layout">
+    <aside class="side">
+      <div class="nav-label">WORKSPACE</div>
+      <button class="nav active" data-page="overview">▦ &nbsp; Overview</button>
+      <button class="nav" data-page="transactions">⇄ &nbsp; Transaksi</button>
+      <button class="nav" data-page="goals">◎ &nbsp; Target tabungan</button>
+      <button class="nav" data-page="reports">▥ &nbsp; Analisis</button>
+      <button class="nav" data-page="settings">⚙ &nbsp; Pengaturan</button>
+    </aside>
+    <main>
+      <section id="overview" class="section active">
+        <div class="heading"><div><h1>Trading Terminal</h1><p>Personal portfolio · Ringkasan keuangan real-time dari transaksi yang kamu catat.</p></div><span class="pill">● ACCOUNT ACTIVE</span></div>
+        <div class="grid">
+          <div class="card"><div class="stat-label">BALANCE</div><div class="stat-value" id="balance">Rp0</div><div class="tiny">Saldo tercatat saat ini</div></div>
+          <div class="card"><div class="stat-label">TOTAL DEPOSIT</div><div class="stat-value positive" id="income">Rp0</div><div class="tiny">Akumulasi uang masuk</div></div>
+          <div class="card"><div class="stat-label">TOTAL WITHDRAW</div><div class="stat-value negative" id="expense">Rp0</div><div class="tiny">Akumulasi uang keluar</div></div>
+          <div class="card"><div class="stat-label">TRANSAKSI</div><div class="stat-value" id="count">0</div><div class="tiny">Jumlah catatan transaksi</div></div>
+        </div>
+        <div class="two">
+          <div class="card"><div class="card-title">Account Performance <span class="tiny">Aktivitas deposit &amp; withdraw</span></div><div style="display:flex;gap:16px;margin:-4px 0 10px;font-size:11px"><span style="color:var(--green)">● Deposit</span><span style="color:var(--red)">● Withdraw</span></div><div class="chart-box"><canvas id="balanceChart"></canvas></div></div>
+          <div class="card"><div class="card-title">Saving Target <span class="tiny">Progress</span></div><div class="tiny">Target tabungan</div><div class="goal-number" id="goalProgressText">Rp0 / Rp0</div><div class="progress"><span id="goalBar" style="width:0%"></span></div><div class="tiny" id="goalPercent">0% tercapai</div><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><div class="card-title">Quick Actions</div><div class="actions"><button class="action" id="quickIn">＋ Deposit<small>Catat uang masuk</small></button><button class="action" id="quickOut">－ Withdraw<small>Catat uang keluar</small></button></div></div>
+        </div>
+        <div class="card" style="margin-top:14px"><div class="card-title">Transaksi terbaru <button class="secondary" id="allTransactions">Lihat semua</button></div><div id="recentTable"></div></div>
+      </section>
+      <section id="transactions" class="section">
+        <div class="heading"><div><h1>Transaction Terminal</h1><p>Catat setiap pemasukan dan pengeluaran.</p></div></div>
+        <div class="card">
+          <div class="card-title">Input transaksi</div>
+          <div class="form-grid">
+            <div class="field"><label>JENIS</label><select id="txType"><option value="in">Deposit / Uang masuk</option><option value="out">Withdraw / Uang keluar</option></select></div>
+            <div class="field"><label>NOMINAL (RUPIAH)</label><input id="txAmount" type="number" min="1" step="1" placeholder="Contoh: 50000"></div>
+            <div class="field"><label>KATEGORI</label><select id="txCategory"><option>Tabungan</option><option>Gaji / Pendapatan</option><option>Penjualan</option><option>Makanan</option><option>Transportasi</option><option>Belanja</option><option tag="x">Tagihan</option><option>Lainnya</option></select></div>
+            <div class="field"><label>TANGGAL</label><input id="txDate" type="date"></div>
+            <div class="field full"><label>CATATAN</label><input id="txNote" maxlength="80" placeholder="Contoh: Menabung hasil jualan"></div>
+            <div class="full"><button id="addTx">SIMPAN TRANSAKSI</button></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px"><div class="card-title">Semua transaksi</div><div id="allTable"></div></div>
+      </section>
+      <section id="goals" class="section">
+        <div class="heading"><div><h1>Saving Goals</h1><p>Tentukan tujuan dan pantau kemajuan tabungan.</p></div></div>
+        <div class="card"><div class="card-title">Atur target tabungan</div><div class="form-grid"><div class="field"><label>NAMA TARGET</label><input id="goalName" placeholder="Contoh: Beli laptop"></div><div class="field"><label>NOMINAL TARGET (RP)</label><input id="goalAmount" type="number" min="1" placeholder="5000000"></div><div class="full"><button id="saveGoal">SIMPAN TARGET</button></div></div></div>
+        <div class="card" style="margin-top:14px"><div class="card-title">Progress target</div><h2 id="goalTitle">Belum ada target</h2><div class="goal-number" id="goalDetail">Rp0 / Rp0</div><div class="progress"><span id="goalBar2" style="width:0%"></span></div><div class="tiny" id="goalDetailPercent">Atur target untuk mulai.</div></div>
+      </section>
+      <section id="reports" class="section">
+        <div class="heading"><div><h1>Performance Analytics</h1><p>Ringkasan pemasukan dan pengeluaran.</p></div></div>
+        <div class="grid">
+          <div class="card"><div class="stat-label">SELISIH BERSIH</div><div class="stat-value" id="net">Rp0</div></div>
+          <div class="card"><div class="stat-label">RATA-RATA PEMASUKAN</div><div class="stat-value" id="avgIn">Rp0</div></div>
+          <div class="card"><div class="stat-label">RATA-RATA PENGELUARAN</div><div class="stat-value" id="avgOut">Rp0</div></div>
+          <div class="card"><div class="stat-label">RASIO TABUNGAN</div><div class="stat-value" id="saveRate">0%</div></div>
+        </div>
+        <div class="card" style="margin-top:14px"><div class="card-title">Ringkasan kategori</div><div id="categoryReport" class="empty">Belum ada transaksi.</div></div>
+      </section>
+      <section id="settings" class="section">
+        <div class="heading"><div><h1>Account Settings</h1><p>Informasi akun yang sedang aktif.</p></div></div>
+        <div class="card"><div class="card-title">Profil pemilik</div><div class="field"><label>NAMA PEMILIK</label><input id="profileName"></div><button id="saveProfile">SIMPAN PROFIL</button></div>
+        <div class="card" style="margin-top:14px"><div class="card-title">Ganti password</div><div class="field"><label>PASSWORD SAAT INI</label><input id="oldPass" type="password"></div><div class="field"><label>PASSWORD BARU (MIN. 8 KARAKTER)</label><input id="newPass" type="password"></div><button id="changePass">GANTI PASSWORD</button></div>
+        <div class="notice">Data disimpan di browser ini. Menghapus data situs/browser dapat menghapus akun dan catatan. Gunakan backup bila tersedia pada versi server mendatang.</div>
+      </section>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const DB='moneyTraderUsers_v1', SESSION='moneyTraderSession_v1';
+let currentUser=null, userData=null;
+const $=id=>document.getElementById(id);
+const rupiah=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n||0);
+const users=()=>JSON.parse(localStorage.getItem(DB)||'{}');
+const saveUsers=o=>localStorage.setItem(DB,JSON.stringify(o));
+async function hash(text){const data=new TextEncoder().encode(text);const digest=await crypto.subtle.digest('SHA-256',data);return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('')}
+function toast(msg){$('toast').textContent=msg;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2600)}
+function cleanUser(u){return u.trim().toLowerCase()}
+function blankData(){return {transactions:[],goal:{name:'',amount:0},profile:''}}
+function persist(){if(!currentUser)return;let all=users();all[currentUser].data=userData;saveUsers(all)}
+function showAuth(which){$('loginPanel').style.display=which==='login'?'block':'none';$('registerPanel').style.display=which==='register'?'block':'none'}
+$('showRegister').onclick=()=>showAuth('register');$('showLogin').onclick=()=>showAuth('login');
+$('registerBtn').onclick=async()=>{
+ const name=$('regName').value.trim(), username=cleanUser($('regUser').value), p=$('regPass').value, p2=$('regPass2').value;
+ if(!name||username.length<3||p.length<8){toast('Lengkapi nama, username (min. 3), dan password (min. 8).');return}
+ if(p!==p2){toast('Konfirmasi password belum sama.');return}
+ if(!/^[a-z0-9_.-]+$/.test(username)){toast('Username hanya boleh huruf, angka, titik, _ atau -.');return}
+ let all=users();if(all[username]){toast('Username sudah digunakan.');return}
+ all[username]={name,passHash:await hash(p),data:blankData()};saveUsers(all);toast('Akun berhasil dibuat. Silakan login.');$('loginUser').value=username;showAuth('login');
+};
+$('loginBtn').onclick=async()=>{
+ const username=cleanUser($('loginUser').value),p=$('loginPass').value,all=users();
+ if(!all[username]||all[username].passHash!==await hash(p)){toast('Username atau password salah.');return}
+ currentUser=username;userData=all[username].data||blankData();sessionStorage.setItem(SESSION,username);enterApp();
+};
+function enterApp(){
+ $('authScreen').style.display='none';$('app').style.display='block';$('ownerName').textContent=userData.profile||users()[currentUser].name;$('avatar').textContent=($('ownerName').textContent[0]||'U').toUpperCase();
+ $('profileName').value=userData.profile||users()[currentUser].name;$('txDate').value=new Date().toISOString().slice(0,10);render();
+}
+$('logoutBtn').onclick=()=>{sessionStorage.removeItem(SESSION);currentUser=null;userData=null;$('app').style.display='none';$('authScreen').style.display='grid';$('loginPass').value='';showAuth('login')};
+function totals(){let income=0,expense=0;userData.transactions.forEach(t=>t.type==='in'?income+=t.amount:expense+=t.amount);return {income,expense,balance:income-expense}}
+function tableHTML(list){if(!list.length)return '<div class="empty">Belum ada transaksi. Tambahkan catatan pertamamu.</div>';return `<div class="table-wrap"><table><thead><tr><th>TANGGAL</th><th>CATATAN</th><th>KATEGORI</th><th>JENIS</th><th>NOMINAL</th></tr></thead><tbody>${list.map(t=>`<tr><td>${t.date}</td><td>${escapeHTML(t.note||'-')}</td><td>${escapeHTML(t.category)}</td><td><span class="pill ${t.type==='out'?'out':''}">${t.type==='in'?'DEPOSIT':'WITHDRAW'}</span></td><td class="${t.type==='in'?'positive':'negative'}">${t.type==='in'?'+':'−'}${rupiah(t.amount)}</td></tr>`).join('')}</tbody></table></div>`}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){
+ const t=totals();$('balance').textContent=rupiah(t.balance);$('income').textContent=rupiah(t.income);$('expense').textContent=rupiah(t.expense);$('count').textContent=userData.transactions.length;
+ $('recentTable').innerHTML=tableHTML([...userData.transactions].slice(-5).reverse());$('allTable').innerHTML=tableHTML([...userData.transactions].reverse());
+ const goal=userData.goal||{name:'',amount:0},pct=goal.amount>0?Math.max(0,Math.min(100,t.balance/goal.amount*100)):0;
+ $('goalProgressText').textContent=`${rupiah(t.balance)} / ${rupiah(goal.amount)}`;$('goalBar').style.width=pct+'%';$('goalPercent').textContent=pct.toFixed(1)+'% tercapai';
+ $('goalTitle').textContent=goal.name||'Belum ada target';$('goalDetail').textContent=`${rupiah(t.balance)} / ${rupiah(goal.amount)}`;$('goalBar2').style.width=pct+'%';$('goalDetailPercent').textContent=goal.amount?`${pct.toFixed(1)}% tercapai · Sisa ${rupiah(Math.max(0,goal.amount-t.balance))}`:'Atur target untuk mulai.';
+ $('net').textContent=rupiah(t.balance);$('avgIn').textContent=rupiah(userData.transactions.filter(x=>x.type==='in').length?t.income/userData.transactions.filter(x=>x.type==='in').length:0);$('avgOut').textContent=rupiah(userData.transactions.filter(x=>x.type==='out').length?t.expense/userData.transactions.filter(x=>x.type==='out').length:0);$('saveRate').textContent=(t.income?Math.max(0,t.balance/t.income*100):0).toFixed(1)+'%';
+ const cats={};userData.transactions.filter(x=>x.type==='out').forEach(x=>cats[x.category]=(cats[x.category]||0)+x.amount);const entries=Object.entries(cats).sort((a,b)=>b[1]-a[1]);$('categoryReport').innerHTML=entries.length?entries.map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line)"><span>${escapeHTML(k)}</span><b>${rupiah(v)}</b></div>`).join(''):'Belum ada transaksi pengeluaran.';
+ drawChart();
+}
+function drawChart(){
+ const c=$('balanceChart'),ctx=c.getContext('2d'),rect=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+ c.width=rect.width*dpr;c.height=rect.height*dpr;ctx.scale(dpr,dpr);
+ const w=rect.width,h=rect.height;ctx.clearRect(0,0,w,h);
+ const tx=userData.transactions.slice(-18),max=Math.max(1,...tx.map(t=>t.amount));
+ ctx.font='10px system-ui';ctx.strokeStyle='#1b2d43';ctx.fillStyle='#8294a9';ctx.lineWidth=1;
+ for(let i=0;i<4;i++){const y=12+i*(h-28)/3;ctx.beginPath();ctx.moveTo(34,y);ctx.lineTo(w-5,y);ctx.stroke();ctx.fillText((100-i*30)+'%',2,y+3)}
+ if(!tx.length){ctx.fillStyle='#8294a9';ctx.font='12px system-ui';ctx.fillText('Belum ada aktivitas deposit / withdraw',Math.max(10,w/2-105),h/2);return}
+ const slot=(w-46)/tx.length,bar=Math.max(5,Math.min(18,slot*.48));
+ tx.forEach((t,i)=>{
+   const x=38+i*slot+slot/2, bh=(t.amount/max)*(h-55);
+   const y=h-17-bh;
+   ctx.fillStyle=t.type==='in'?'#00d58a':'#ff465c';
+   ctx.globalAlpha=.9;ctx.fillRect(x-bar/2,y,bar,bh);ctx.globalAlpha=1;
+   ctx.fillStyle='#8294a9';ctx.font='9px system-ui';
+   if(i%Math.ceil(tx.length/6)===0)ctx.fillText(t.date.slice(5),x-13,h-2);
+ });
+}
+document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.page).classList.add('active');if(b.dataset.page==='overview')drawChart()});
+$('allTransactions').onclick=()=>document.querySelector('[data-page="transactions"]').click();
+function openTx(type){$('txType').value=type;document.querySelector('[data-page="transactions"]').click();$('txAmount').focus()}
+$('quickIn').onclick=()=>openTx('in');$('quickOut').onclick=()=>openTx('out');
+$('addTx').onclick=()=>{let amount=Number($('txAmount').value),date=$('txDate').value;if(!Number.isFinite(amount)||amount<=0||!date){toast('Isi nominal dan tanggal yang benar.');return}let type=$('txType').value;if(type==='out'&&amount>totals().balance){toast('Saldo tercatat tidak mencukupi.');return}userData.transactions.push({id:Date.now(),type,amount,date,category:$('txCategory').value,note:$('txNote').value.trim()});persist();$('txAmount').value='';$('txNote').value='';render();toast('Transaksi berhasil disimpan.')};
+$('saveGoal').onclick=()=>{let name=$('goalName').value.trim(),amount=Number($('goalAmount').value);if(!name||amount<=0){toast('Isi nama dan nominal target.');return}userData.goal={name,amount};persist();render();toast('Target tabungan diperbarui.')};
+$('saveProfile').onclick=()=>{let n=$('profileName').value.trim();if(!n){toast('Nama tidak boleh kosong.');return}userData.profile=n;persist();$('ownerName').textContent=n;$('avatar').textContent=n[0].toUpperCase();toast('Profil diperbarui.')};
+$('changePass').onclick=async()=>{let old=$('oldPass').value,nw=$('newPass').value,all=users();if(all[currentUser].passHash!==await hash(old)){toast('Password saat ini salah.');return}if(nw.length<8){toast('Password baru minimal 8 karakter.');return}all[currentUser].passHash=await hash(nw);saveUsers(all);$('oldPass').value='';$('newPass').value='';toast('Password berhasil diganti.')};
+window.addEventListener('resize',()=>{if(currentUser)drawChart()});
+(function restore(){const u=sessionStorage.getItem(SESSION),all=users();if(u&&all[u]){currentUser=u;userData=all[u].data||blankData();enterApp()}})();
+</script>
+</body>
+</html>
